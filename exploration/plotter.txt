@@ -10,7 +10,7 @@ direction = Direction to move
             01 = down  (y-)
             02 = up    (y+)
             04 = right (x+)
-            08 = right (x-)
+            08 = left  (x-)
 
 Start move
   \x1b\x00{direction}
@@ -40,8 +40,9 @@ send
 returns
   '    0,    0\x03'
 
-Other folk seem to think this is page orientation
-  FN0
+This appears to tell the printer to zero at the machine center
+Other folk seem to think this is page orientation.
+  FN0\x03
 
 Set Cutting Speed
 =================

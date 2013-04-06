@@ -61,7 +61,8 @@ def stepwrite(val):
 	return ep_send.write(val)
 
 def plot():
-	#print ____write("TB99\x03")
+	#print ____write("FN0\x03") # Rezero at hardware home
+	#print ____write("TB99\x03") # Unknown...
 	# Force
 	print ____write("FX15,0\x03")
 	#print ____write("FY1\x03\x03")
@@ -79,14 +80,15 @@ def plot():
 	#print ____write("L0\x03")
 	
 	# Move to y,x
-	#print ____write("M0,0\x03")
-	#print stepwrite("D0,3600\x03")
-	#print stepwrite("D5200,0\x03")
-	#print stepwrite("D0,0\x03")
+	print ____write("M0,0\x03")
+	print stepwrite("D0,3600\x03")
+	print stepwrite("D5200,0\x03")
+	print stepwrite("D0,0\x03")
 	
-	print stepwrite("M%d,%d\x03"%(166.91*20, (180 - 62.96)*20))
-	print stepwrite("D%d,%d\x03"%(170.96*20, (180 - 58.89)*20))
-	print stepwrite("D%d,%d\x03"%(175.03*20, (180 - 62.96)*20))
+	#print stepwrite("M%d,%d\x03"%(166.91*20, (180 - 62.96)*20))
+	#print stepwrite("D%d,%d\x03"%(170.96*20, (180 - 58.89)*20))
+	#print stepwrite("D%d,%d\x03"%(175.03*20, (180 - 62.96)*20))
+	#print stepwrite("D%d,%d\x03"%(166.91*20, (180 - 62.96)*20))
 	
 	#print ____write("&1,1,1\x03")
 	#print ____write("TB50,0\x03")
@@ -94,14 +96,14 @@ def plot():
 	# Return to home
 	print ____write("H\x03\x03")
 
-#register()
-#raw_input()
-#plot()
-#raw_input()
-#plot()
+register()
+raw_input()
+plot()
+raw_input()
+plot()
 
-ep_send.write("!10,0\x03")
-ep_send.write("\x1b\x00\x04")
-import time
-time.sleep(3)
-ep_send.write("\x1b\x00\x00")
+#ep_send.write("!10,0\x03")
+#ep_send.write("\x1b\x00\x04")
+#import time
+#time.sleep(3)
+#ep_send.write("\x1b\x00\x00")
