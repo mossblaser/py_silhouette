@@ -1,0 +1,186 @@
+TODO
+====
+
+Find out what is being done to check that paper is loaded etc.
+
+Move Head
+=========
+
+direction = Direction to move
+            01 = down  (y-)
+            02 = up    (y+)
+            04 = right (x+)
+            08 = right (x-)
+
+Start move
+  \x1b\x00{direction}
+Stop move
+  \x1b\x00\x00
+
+
+Unknowns
+========
+
+Goodness knows
+? = 18 for cutting, 0 for drawing
+  FC{?}\x03
+
+Goodness knows
+  FJ\x03
+
+Some sort of status?
+send
+  FA\x03
+returns
+  '    0,    0\x03'
+
+Sent early in desktop software start
+send
+  TB71\x03
+returns
+  '    0,    0\x03'
+
+Other folk seem to think this is page orientation
+  FN0
+
+Set Cutting Speed
+=================
+
+speed = int between 1 and 10 inclusive
+
+Send:
+  !{speed},0\x03
+
+Set Cutting Force
+=================
+
+force = int between 1 and 33 inclusive
+
+Send:
+  FX{force},0\x03
+
+
+Get Printer Name
+================
+
+name_string = Name of printer as a 10-char human readable string
+
+Send:
+  FG\x03
+
+Receive:
+  {name_string}\x03
+
+Get printer status
+==================
+
+status = 0 iff ready
+
+Send:
+  \x1b\x05
+
+Receive:
+  {status}\x03
+
+
+Register Plotter
+================
+
+reg_line_length = length (mm) of the corner-lines in registration marks
+reg_line_thickness = thickness (mm) of the corner-lines in registration marks
+
+registered_area_width = width (mm) of the box the registration marks demark
+registered_area_height = height (mm) of the box the registration marks demark
+
+mystery_rotation = "117,75" if default, "147,117" if inverted (which basically
+                   doesn't work)... hmm
+
+blobx = offset of the black square relative to the corner lines
+bloby = offset of the black square relative to the corner lines
+
+search = '1' if the device should search about for the reg mark,
+         '' if the cutter is currently over the mark.
+
+success = An int formatted with "%5d" (i.e. has leading spaces) which is:
+          -1: No initial reg mark(?)
+           0: success
+           1: No bottom reg mark(?)
+
+Send:
+  // Unknown effect (I thought it was speed...)
+  !10,0\x03
+  // Appears to set to "native" home position
+  FN0\x03
+  // Set home position to the place we're about to home in on
+  TB99\x03
+  // Set registration line length
+  TB51,{reg_line_length*20}\x03
+  // If removed the carriage hits the right-side and fails
+  // If set to 1, looks on the bottom right for something
+  // If set to 0, just fails
+  // If set to 3, does a strange slide around on the top right and fails...
+  TB52,2\x03
+  // Set registration line thickness
+  TB53,{reg_line_thickness*20}\x03
+  // Offset of corner blob, seems to default to 0,0 if ommitted
+  TB54,{bloby},{blobx}\x03
+  // Seems to calibrate scaling and rotation
+  TB55,1\x03
+  // Register a block of the given size
+  TB{search}23,{registered_area_height*20},{registered_area_width*20},{mystery_rotation}\x03
+
+Receive:
+  {success}\0x03
+
+
+Plotting a line (after enabling regmarks)
+=========================================
+width = width of drawable area (i.e. the size of the reg area)
+height = height of drawable area (i.e. the size of the reg area)
+
+pwidth = width of paper accounting for a small margin
+pheight = height of paper including for a small margin
+
+speed = int between 1 and 10 inclusive
+force = int between 1 and 33 inclusive
+
+x = coordinate relative to registration square (or that page corner if not regd)
+y = coordinate relative to registration square (or that page corner if not regd)
+
+Send:
+  // Unknown. Not needed
+  TB99\x03
+  // Cutting force
+  FX{force},0\x03
+  // Unknown. Not needed
+  FY1\x03\x03
+  // Unknown. Not needed
+  FU5100,4000\x03
+  // Cutting speed
+  !{speed},0\x03
+  // Pen(0) or Cutter(18). Causes a tick of motion in some direction
+  FC18\x03
+  // Unknown. Not needed
+  FM1\x03
+  // Unknown. Not needed
+  TB50,0\x03
+  // Size of piece of paper, less its margins (seemingly not needed)
+  FO{pheight},{pwidth}\x03
+  // Not needed. Doesn't appear to do much when changed...
+  \\0,0\x03
+  // Set size of drawable area (crops the image for us!)
+  Z{height},{width}\x03
+  // Unknown. Not needed
+  L0\x03
+  // Move to y,x relative
+  M{y*20},{x*20}\x03
+  // Cut/Draw to y,x relative
+  D{y*20},{x*20}\x03
+  // Unknown, Not needed
+  &1,1,1\x03
+  // Unknown, Not needed
+  TB50,0\x03
+  // Unknown, Not needed
+  FO0\x03
+  // Causes the device to return to home
+  H\x03\x03
