@@ -3,6 +3,15 @@ TODO
 
 Find out what is being done to check that paper is loaded etc.
 
+Track Enhancing
+===============
+
+dontdoit = 1 if no track enhancing, 0 if track enhancing
+
+Run the page through the rollers a few times
+Send:
+  FY{dontdoit}\x03
+
 Move Head
 =========
 
@@ -148,13 +157,15 @@ force = int between 1 and 33 inclusive
 x = coordinate relative to registration square (or that page corner if not regd)
 y = coordinate relative to registration square (or that page corner if not regd)
 
+disable_track_enhancing = 1 if not using track enhancing, 0 if using it
+
 Send:
   // Unknown. Not needed
   TB99\x03
   // Cutting force
   FX{force},0\x03
-  // Unknown. Not needed
-  FY1\x03\x03
+  // Track Enhancing disabled
+  FY{disable_track_enhancing}\x03\x03
   // Unknown. Not needed
   FU5100,4000\x03
   // Cutting speed

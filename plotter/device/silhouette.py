@@ -132,11 +132,11 @@ class SilhouetteBase(DeviceBase):
 		data = self._send_buffer
 		self._send_buffer = ""
 		
+		print "\n".join(map(repr, data.split("\x03")))
+		
 		# Send it all
 		to_send = len(data)
-		while to_send:
-			to_send -= self.ep_send.write(data)
-			data = data[:-to_send]
+		assert(self.ep_send.write(data, 0) == to_send)
 	
 	
 	def get_name(self):
@@ -228,8 +228,8 @@ class SilhouetteBase(DeviceBase):
 		Returns a dictionary {tool:human_readable_description, ...}
 		"""
 		return {
-			self.TOOL_PEN : "Pen",
-			self.TOOL_PEN : "Cutter",
+			self.TOOL_PEN    : "Pen",
+			self.TOOL_CUTTER : "Cutter",
 		}
 	
 	
