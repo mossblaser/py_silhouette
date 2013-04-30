@@ -6,7 +6,7 @@ Utilities for sorters/filters. Intended for internal use by the design package.
 
 import operator
 
-from math import sqrt, sin, cos, tan, asin, acos, atan
+from math import sqrt
 
 from collections import defaultdict
 
@@ -168,8 +168,8 @@ def to_paths(design):
 
 def bounding_box(lines):
 	"""
-	Takes an iterable of lines ((x,y), (x,y)) and returns the bounding box ((x,y),
-	(x,y)).
+	Takes an iterable of lines ((x,y), (x,y)) and returns the bounding box
+	((x_left,y_top), (x_right,y_bottom)).
 	"""
 	points = sum(map(list, lines), [])
 	
@@ -204,17 +204,15 @@ def get_subpath(path, req_length):
 	# Truncate the last segment if needed
 	if length > req_length:
 		line = out.pop()
+		length -= line_length(line)
 		
-		h = line_length(line)
+		factor = (req_length - length) / line_length(line)
 		
-		theta = asin((line[1][1] - line[0][1]) / h)
+		x,y = map(operator.sub, line[1], line[0])
+		x *= factor
+		y *= factor
 		
-		h = (h - (length - req_length))
-		
-		a = cos(theta) * h
-		o = sin(theta) * h
-		
-		out.append((line[0], (line[0][0] + a, line[0][1] + o)))
+		out.append((line[0], (line[0][0] + x, line[0][1] + y)))
 	
 	return out
 
