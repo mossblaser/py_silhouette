@@ -42,7 +42,7 @@ def load_svg(data):
 		for line_segment in zip(segments, segments[1:]):
 			design.append(line_segment)
 	
-	return design
+	return (width, height), design
 
 
 

@@ -11,6 +11,8 @@ Designs can be loaded from common file formats using load_file(filename) or
 using a loader function from get_loaders() which conventionally accept a string
 of data and return a design. See load.py for details on adding new loaders.
 
+All design loaders return ((width, height), design)
+
 The sort and filter modules contain functions which manipulate designs to
 improve plotting/cutting performance. See these files for more details.
 """

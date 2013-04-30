@@ -27,7 +27,13 @@ def load_hpgl(data):
 	# The position of the virtual plotter
 	cur_pos = (0,0)
 	
+	# Width and height (bodge)
+	w,h = 0,0
+	
 	for command in commands:
+		w = max(w, cur_pos[0])
+		h = max(h, cur_pos[1])
+		
 		if command.startswith("PU"):
 			if len(command) <= 2:
 				continue
@@ -44,6 +50,7 @@ def load_hpgl(data):
 			design.add((cur_pos, end_pos))
 			cur_pos = end_pos
 	
-	return design
+	
+	return (w, h), design
 
 

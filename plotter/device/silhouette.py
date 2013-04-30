@@ -7,7 +7,7 @@ Device drivers for Silhouette cutter/plotters.
 import usb.core
 import usb.util
 
-from plotter.device import DeviceBase, register_device
+from plotter.device import DeviceBase
 from plotter.device import MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT
 
 
@@ -225,11 +225,11 @@ class SilhouetteBase(DeviceBase):
 	
 	def get_tools(self):
 		"""
-		Returns a dictionary {tool:human_readable_description, ...}
+		Returns a dictionary {human_readable_description:tool, ...}
 		"""
 		return {
-			self.TOOL_PEN    : "Pen",
-			self.TOOL_CUTTER : "Cutter",
+			"Pen"    : self.TOOL_PEN,
+			"Cutter" : self.TOOL_CUTTER,
 		}
 	
 	
@@ -381,7 +381,6 @@ class SilhouetteBase(DeviceBase):
 
 
 
-@register_device("Silhouette Portrait")
 class Portrait(SilhouetteBase):
 	# The product ID of the Silhouette Portrait
 	PRODUCT = 0x1123
