@@ -21,3 +21,10 @@ MOVE_DOWN  = object()
 MOVE_LEFT  = object()
 MOVE_RIGHT = object()
 
+class RegistrationMarkNotFoundError(Exception):
+	"""
+	Raised when an attempt is made to zero on the registration marks fails.
+	"""
+	pass
+
+

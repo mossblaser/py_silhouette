@@ -9,13 +9,7 @@ import usb.util
 
 from plotter.device import DeviceBase
 from plotter.device import MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT
-
-
-class RegistrationMarkNotFoundError(Exception):
-	"""
-	Raised when an attempt is made to zero on the registration marks fails.
-	"""
-	pass
+from plotter.device import RegistrationMarkNotFoundError
 
 
 class SilhouetteBase(DeviceBase):
@@ -132,8 +126,6 @@ class SilhouetteBase(DeviceBase):
 		data = self._send_buffer
 		self._send_buffer = ""
 		
-		print "\n".join(map(repr, data.split("\x03")))
-		
 		# Send it all
 		to_send = len(data)
 		assert(self.ep_send.write(data, 0) == to_send)
@@ -219,7 +211,7 @@ class SilhouetteBase(DeviceBase):
 		Set the type of tool to be used. Use get_tools to find out what tools are
 		available.
 		"""
-		assert(tool in self.get_tools())
+		assert(tool in self.get_tools().values())
 		self._send("FC%d\x03"%tool)
 	
 	
