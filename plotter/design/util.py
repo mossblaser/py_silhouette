@@ -64,75 +64,84 @@ class Lines(object):
 
 
 
-class DependencyTree(object):
+class DependencyOrder(object):
 	"""
-	A dependency tree structure which is designed for efficiently extracting the
-	hierarchical dependencies of paths which surround other paths. See
-	paths_by_dependency().
+	A structure used for ordering boxes by their dependencies, that is, placing
+	outer boxes before their inner boxes. 
+	
+	When given a set of [(x1,y1), (x2,y2), ...] lists (that is, of paths), returns
+	a series of lists where elements in a list may be reordered without
+	conciquence but the lists enforce the dependency order.
+	
+	Hideously expensive in algorithmic complexity but it does, at least, work...
+	It feels a lot like a bubble sort and probably has a similar (maybe worse)
+	complexity.
 	"""
 	
-	def __init__(self
-	            , value    = None
-	            , children = None
-	            , ordering = None
-	            ):
-		self.value    = value
-		self.children = children or []
-		self.ordering = ordering or operator.lt
+	def __init__(self, initial_list = None):
+		# List of items which may be reordered freely
+		self.items = []
+		
+		# Gets a DependencyOrder object containing only objects contained by some
+		# element of self.items. Access via self.next_set.
+		self._next_set = None
+		
+		# Initialise if specified.
+		for item in (initial_list or []):
+			self.add(item)
+	
+	
+	@property
+	def next_set(self):
+		"""
+		Get the next set of dependency items in the chain, creating a new one if it
+		is None.
+		"""
+		if self._next_set is None:
+			self._next_set = DependencyOrder()
+		return self._next_set
+	
+	
+	def a_contains_b(self, a, b):
+		"""
+		The partial-ordering relation between paths.
+		"""
+		return box_contains_box(bounding_box(a), bounding_box(b))
 	
 	
 	def add(self, value):
-		if self.value is None or self.ordering(self.value, value):
-			# Is contained by this node
-			
-			# Is it contained by any child?
-			for child in self.children:
-				if self.ordering(child.value, value):
-					child.add(value)
-					return
-			
-			# Nope, it is a peer of any of our children
-			self.children.append(DependencyTree(value, ordering=self.ordering))
-		else:
-			# Is a parent to this node
-			
-			# Clone this node and make it a child of this node, resetting its contents
-			child_node = DependencyTree(self.value, self.children, self.ordering)
-			self.value = value
-			self.children = [child_node]
-	
-	
-	def remove(self, value):
-		if self.value == value:
-			assert(self.children == [])
-			self.value = None
-		else:
-			for child in self.children[:]:
-				child.remove(value)
-				if child.value is None:
-					self.children.remove(child)
-	
-	
-	def get_leaves(self):
-		if self.children:
-			return sum((child.get_leaves() for child in self.children), [])
-		else:
-			return [self.value]
-	
-	
-	def __repr__(self):
-		children = "\n".join(map(repr, self.children))
-		children = "\n  ".join(children.split("\n"))
+		"""
+		Add a new element to the object.
+		"""
+		for cur_value in self.items[:]:
+			# If any value currently in the list is greater than this, place this in
+			# the next set.
+			if self.a_contains_b(cur_value, value):
+				return self.next_set.add(value)
 		
-		return ("DependencyTree(%s)\n  %s"%(repr(self.value), children)).rstrip()
+		for cur_value in self.items[:]:
+			# If any values are less than this, move them into the next set
+			if self.a_contains_b(value, cur_value):
+				self.next_set.add(cur_value)
+				self.items.remove(cur_value)
+		
+		self.items.append(value)
 	
 	
-	def __len__(self):
-		return (1 if self.value is not None else 0) \
-		     + sum(map(len, self.children))
-
-
-
+	def __iter__(self):
+		"""
+		Iterate over the lists of lists of reorderable paths.
+		"""
+		class DependencyOrderIter(object):
+			def __init__(self, do): self.do = do
+			def next(self):
+				if not self.do.items:
+					raise StopIteration()
+				else:
+					do = self.do
+					self.do = do.next_set
+					return do.items
+		return DependencyOrderIter(self)
 def to_paths(design):
 	"""
 	Gets a list of paths as lists of ((x,y),(x,y)) tuples for continuous line
@@ -235,20 +244,5 @@ def paths_by_dependency(design):
 	are those paths contained by the paths in the following list.
 	"""
 	
-	tree = DependencyTree(ordering = (lambda x,y:
-	                                  box_contains_box(bounding_box(x),
-	                                                   bounding_box(y))))
-	
-	out = []
-	
-	# Convert design to paths and add those paths to the DependencyTree
-	map(tree.add, to_paths(design))
-	
-	# Repeatedly remove the leaves (i.e. those paths which do not contain any
-	# other paths)
-	while tree:
-		leaves = tree.get_leaves()
-		out.append(leaves)
-		map(tree.remove, leaves)
-	
-	return out
+	do = DependencyOrder(to_paths(design))
+	return list(do)[::-1]
