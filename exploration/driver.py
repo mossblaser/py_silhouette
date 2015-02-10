@@ -4,7 +4,7 @@ import usb.core
 import usb.util
 
 dev = usb.core.find(idVendor=0x0b4d, idProduct=0x1123)
-print dev
+
 interface = dev[0][(0,0)]
 
 if dev.is_kernel_driver_active(interface.bInterfaceNumber):
