@@ -7,6 +7,16 @@ from plotter.device import RegistrationMarkNotFoundError
 
 from plotter.device.silhouette import Portrait
 
+try:
+	import rpyc
+	print "Trying to connect to pi."
+	c = rpyc.classic.connect("raspberrypi")
+	RemotePortrait = c.modules["plotter.device.silhouette"].Portrait
+except:
+	print "No remote portrait access."
+	class RemotePortrait(object):
+		def is_available(self): return False
+
 import plotter.design.filter
 import plotter.design.util
 
@@ -61,7 +71,8 @@ class DeviceMixin(object):
 		
 		# List of plotter.device.Device classes to look for
 		devices = [
-			Portrait
+			Portrait,
+			RemotePortrait,
 		]
 		
 		for Device in devices:
@@ -256,7 +267,9 @@ class DeviceMixin(object):
 			                     , buttons = gtk.BUTTONS_CLOSE
 			                     , message_format = error
 			                     )
-			d.run()
-			d.destroy()
+			def on_response(dlg,_):
+				dlg.destroy()
+			d.connect("response", on_response) 	
+			d.show()
 		
 		
