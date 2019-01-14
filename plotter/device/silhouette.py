@@ -42,10 +42,10 @@ class SilhouetteBase(DeviceBase):
 		Returns a set of USB devices which have the appropriate product ID.
 		"""
 		assert(self.PRODUCT is not None)
-		return usb.core.find(find_all=True
-		                    , idVendor=self.VENDOR
-		                    , idProduct=self.PRODUCT
-		                    )
+		return list(usb.core.find(find_all=True
+		                         , idVendor=self.VENDOR
+		                         , idProduct=self.PRODUCT
+		                         ))
 	
 	
 	def is_available(self):
@@ -68,8 +68,8 @@ class SilhouetteBase(DeviceBase):
 		self.interface = self.dev[0][(0,0)]
 		
 		# Detach any kernel drivers so we can control the device
-		if self.dev.is_kernel_driver_active(self.interface):
-			self.dev.detach_kernel_driver(self.interface)
+		if self.dev.is_kernel_driver_active(self.interface.bInterfaceNumber):
+			self.dev.detach_kernel_driver(self.interface.bInterfaceNumber)
 		
 		# Reset the device
 		self.dev.reset()
