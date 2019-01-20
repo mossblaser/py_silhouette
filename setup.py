@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 
-with open("pysilhouette/version.py", "r") as f:
+with open("py_silhouette/version.py", "r") as f:
     exec(f.read())
 
 setup(
-    name="pysilhouette",
+    name="py_silhouette",
     version=__version__,
     packages=find_packages(),
 
@@ -33,5 +33,5 @@ setup(
     keywords="plotter cutter driver usb silhouette",
 
     # Requirements
-    install_requires=["pyusb"],
+    install_requires=["pyusb>=1.0.0", "attrs>=18.0.0"],
 )

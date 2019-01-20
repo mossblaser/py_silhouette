@@ -1,30 +1,10 @@
 #!/usr/bin/env python
 
 """
-An common interface to plotting devices.
-
-DeviceBase is the base class from which all Devices descend and specifies a
-common interface for plotters.
+A Python driver for controlling cutters and plotters in the Silhouette Portrait
+family.
 """
 
-# All modules containing devices should be listed here
-__all__ = [
-	"silhouette",
-]
+from py_silhouette.version import __version__
 
-# The base class for all devices
-from plotter.device.base import DeviceBase
-
-# Directions for continuous movement
-MOVE_UP    = object()
-MOVE_DOWN  = object()
-MOVE_LEFT  = object()
-MOVE_RIGHT = object()
-
-class RegistrationMarkNotFoundError(Exception):
-	"""
-	Raised when an attempt is made to zero on the registration marks fails.
-	"""
-	pass
-
-
+from py_silhouette.device import *
