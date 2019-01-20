@@ -180,10 +180,6 @@ For diagnostic purposes you can request the device name and state:
 .. autoclass:: DeviceState
     :members:
 
-Once you've finished using a device, you should close the connection using:
-
-.. automethod:: SilhouetteDevice.close
-
 
 Setting the plotter origin
 ``````````````````````````
