@@ -315,9 +315,9 @@ class SilhouetteDevice(object):
         """
         Ensure all outstanding commands have been sent. Blocks until complete.
         """
-        if self._send_buffer:
-            assert(self._usb_send_ep.write(self._send_buffer) == len(self._send_buffer))
-            self._send_buffer = b""
+        while self._send_buffer:
+            written = self._usb_send_ep.write(self._send_buffer)
+            self._send_buffer = self._send_buffer[written:]
     
     def get_name(self):
         """
