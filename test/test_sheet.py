@@ -116,3 +116,29 @@ d.set_force(d.params.tool_force_max)
 d.move_home()
 d.flush()
 input(" Lines should have been drawn at different forces. <Press Enter>")
+
+if d.params.tool_depth_min is not None:
+    print("Test 6: Auto blade depth test")
+    input("    Remove pen and install auto-blade knife, then <Press Enter>")
+    twenty_fifth = int(
+        d.params.tool_depth_min +
+        (d.params.tool_depth_max - d.params.tool_depth_min) * 0.25
+    )
+    seventy_fifth = int(
+        d.params.tool_depth_min +
+        (d.params.tool_depth_max - d.params.tool_depth_min) * 0.75
+    )
+    for depth in [
+        seventy_fifth,
+        twenty_fifth,
+        d.params.tool_depth_max,
+        d.params.tool_depth_min,
+    ]:
+        d.set_depth(depth)
+        d.flush()
+        input("    Auto blade should be set to {} <Press Enter>".format(depth))
+else:
+    print("Test 6: Auto blade depth test")
+    print("    SKIPPED (autoblade not supported for {})".format(
+        d.params.product_name,
+    ))

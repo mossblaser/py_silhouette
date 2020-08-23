@@ -214,6 +214,11 @@ work correctly, the diameter of the tool must also be supplied.
 
 .. automethod:: SilhouetteDevice.set_tool_diameter
 
+Finally, for devices with an auto blade, the following function may be used to
+automatically set the blade depth.
+
+.. automethod:: SilhouetteDevice.set_depth
+
 
 Plotting
 ````````
@@ -258,6 +263,8 @@ The following exceptions may be thrown by this library.
 
 .. autoexception:: RegistrationMarkNotFoundError
 
+.. autoexception:: AutoBladeNotSupportedError
+
 
 Origins and Acknowledgements
 ````````````````````````````
@@ -275,5 +282,9 @@ Inkscape-Silhouette_). Based hints in these other codebases I managed to
 document the remaining 'unknowns' within my minimal subset of the USB protocol
 used by Silhouette Studio.
 
+I'm also greatful to derwassi_ on GitHub for reverse engineering and assisting
+with testing of the auto-blade feature.
+
 .. _Robocut: https://github.com/nosliwneb/robocut
 .. _Inkscape-Silhouette: https://github.com/fablabnbg/inkscape-silhouette
+.. _derwassi: https://github.com/derwassi

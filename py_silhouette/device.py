@@ -15,6 +15,7 @@ __names__ = [
     "DeviceError",
     "NoDeviceFoundError",
     "RegistrationMarkNotFoundError",
+    "AutoBladeNotSupportedError",
     "DeviceParameters",
     "SUPPORTED_DEVICE_PARAMETERS",
     "enumerate_devices",
@@ -85,6 +86,13 @@ class RegistrationMarkNotFoundError(DeviceError):
     """The registration mark could not be found."""
 
 
+class AutoBladeNotSupportedError(DeviceError):
+    """
+    Thrown when :py:meth:`SilhouetteDevice.set_depth` is called on a device
+    without auto blade support.
+    """
+
+
 @attrs(frozen=True)
 class DeviceParameters(object):
     """
@@ -141,6 +149,18 @@ class DeviceParameters(object):
     
     tool_diameter_max = attrib(default=2.3)
     """Highest valid tool diameter (mm)"""
+    
+    tool_depth_min = attrib(default=None)
+    """
+    Shortest valid knife setting, or None if automatic depth setting is not
+    possible for this device.
+    """
+    
+    tool_depth_max = attrib(default=None)
+    """
+    Longest valid knife setting, or None if automatic depth setting is not
+    possible for this device.
+    """
 
 
 """
@@ -155,6 +175,8 @@ SUPPORTED_DEVICE_PARAMETERS = [
         area_width_max=inch2mm(8.5),
         area_height_min=inch2mm(3.0),
         area_height_max=inch2mm(40.0),
+        tool_depth_min=None,
+        tool_depth_max=None,
     ),
     # Warning: values for entries below taken from
     # https://github.com/fablabnbg/inkscape-silhouette and have not been
@@ -167,6 +189,8 @@ SUPPORTED_DEVICE_PARAMETERS = [
         area_width_max=inch2mm(8.0),
         area_height_min=inch2mm(3.0),
         area_height_max=inch2mm(40.0),
+        tool_depth_min=0,
+        tool_depth_max=10,
     ),
     DeviceParameters(
         "Silhouette Cameo",
@@ -176,6 +200,8 @@ SUPPORTED_DEVICE_PARAMETERS = [
         area_width_max=inch2mm(12.0),
         area_height_min=inch2mm(3.0),
         area_height_max=inch2mm(40.0),
+        tool_depth_min=None,
+        tool_depth_max=None,
     ),
     DeviceParameters(
         "Silhouette Cameo2",
@@ -185,15 +211,19 @@ SUPPORTED_DEVICE_PARAMETERS = [
         area_width_max=inch2mm(12.0),
         area_height_min=inch2mm(3.0),
         area_height_max=inch2mm(40.0),
+        tool_depth_min=None,
+        tool_depth_max=None,
     ),
     DeviceParameters(
-        "Silhouette Cameo2",
+        "Silhouette Cameo3",
         usb_vendor_id=0x0B4D,
         usb_product_id=0x112F,
         area_width_min=inch2mm(3.0),
         area_width_max=inch2mm(12.0),
         area_height_min=inch2mm(3.0),
         area_height_max=inch2mm(40.0),
+        tool_depth_min=0,
+        tool_depth_max=10,
     ),
 ]
 
@@ -316,7 +346,7 @@ class SilhouetteDevice(object):
         Ensure all outstanding commands have been sent. Blocks until complete.
         """
         while self._send_buffer:
-            written = self._usb_send_ep.write(self._send_buffer)
+            written = self._usb_send_ep.write(self._send_buffer[:1024], timeout=0)
             self._send_buffer = self._send_buffer[written:]
     
     def get_name(self):
@@ -339,7 +369,6 @@ class SilhouetteDevice(object):
         try:
             return DeviceState(value[:1])
         except ValueError:
-            print(value)
             return DeviceState.unknown
     
     def move_home(self):
@@ -487,6 +516,33 @@ class SilhouetteDevice(object):
             speed,
             self.params.tool_speed_min,
             self.params.tool_speed_max,
+        )))
+    
+    def set_depth(self, depth):
+        """
+        Set the blade depth on devices supporting auto blade.
+        
+        This parameter will be automatically clamped to the range specified in
+        the :py:class:`SilhouetteDevice.params`\ :py:attr:`.tool_depth_min
+        <DeviceParameters.tool_depth_min>` and
+        :py:class:`SilhouetteDevice.params`\ :py:attr:`.tool_depth_max
+        <DeviceParameters.tool_depth_max>`.
+        
+        If the device does not have auto blade support (i.e.
+        :py:class:`SilhouetteDevice.params`\ :py:attr:`.tool_depth_min
+        <DeviceParameters.tool_depth_min>` is None), an
+        :py:exc:`AutoBladeNotSupportedError` will be raised.
+        """
+        if (
+            self.params.tool_depth_min is None or
+            self.params.tool_depth_max is None
+        ):
+            raise AutoBladeNotSupportedError()
+        
+        self._send(b"TF%d,1\03"%int(clamp(
+            depth,
+            self.params.tool_depth_min,
+            self.params.tool_depth_max,
         )))
     
     def zero_on_registration_mark(self, width, height,
