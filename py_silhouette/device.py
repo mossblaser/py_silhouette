@@ -625,7 +625,9 @@ class SilhouetteDevice(object):
             square. In practice this is very difficult to achieve so most users
             will want to leave this setting in its default mode (True).
         """
-        if box_size != 5.0:
+        # NB: Approximate comparison to allow for e.g. floating point precision
+        # when values come from SVG files
+        if abs(box_size - 5.0) < 0.01:
             raise NotImplementedError(
                 "Registration mark box size must always be 5mm.")
         
