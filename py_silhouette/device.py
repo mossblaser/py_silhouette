@@ -627,7 +627,7 @@ class SilhouetteDevice(object):
         """
         # NB: Approximate comparison to allow for e.g. floating point precision
         # when values come from SVG files
-        if abs(box_size - 5.0) < 0.01:
+        if abs(box_size - 5.0) > 0.01:
             raise NotImplementedError(
                 "Registration mark box size must always be 5mm.")
         
