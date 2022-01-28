@@ -348,10 +348,12 @@ class SilhouetteDevice(object):
         Receive some data from the device. Returns a bytestring.
         """
         data_array = self._usb_recv_ep.read(size, timeout)
-        # NB: This method has been renamed to tobytes() in Python 3x. The
-        # deprecated method name is used for compatibility with both Python
-        # versions.
-        return data_array.tostring()
+        # NB: tobytes() was called tostring() in Python 2x. Here we try using
+        # the Python 3x name and fall back for Python 2x compatibility.
+        try:
+            return data_array.tobytes()
+        except AttributeError:
+            return data_array.tostring()
     
     def flush(self):
         """
