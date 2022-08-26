@@ -10,7 +10,7 @@ setup(
     packages=find_packages(),
 
     # Metadata for PyPi
-    url="https://github.com/mossblaser/pysilhouette",
+    url="https://github.com/mossblaser/py_silhouette",
     author="Jonathan Heathcote",
     description="A USB driver and Python API to control the Silhouette Portrait plotter.",
     license="LGPLv3",
