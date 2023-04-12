@@ -226,6 +226,7 @@ SUPPORTED_DEVICE_PARAMETERS = [
         tool_depth_max=10,
     ),
     # Contributed by Yohalmo Garcia (@yohalmogarcia on GitHub, see issue #3)
+    # and @LoveisAFK on GitHub (see issue #6)
     DeviceParameters(
         product_name='Silhouette Cameo4',
         usb_vendor_id=0x0B4D,
@@ -236,6 +237,7 @@ SUPPORTED_DEVICE_PARAMETERS = [
         area_height_max=inch2mm(40.0),
         tool_depth_min=0,
         tool_depth_max=10,
+        tool_speed_max=3000.0,
     ),
 ]
 
