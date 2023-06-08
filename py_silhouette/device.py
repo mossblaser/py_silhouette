@@ -178,9 +178,8 @@ SUPPORTED_DEVICE_PARAMETERS = [
         tool_depth_min=None,
         tool_depth_max=None,
     ),
-    # Warning: values for entries below taken from
-    # https://github.com/fablabnbg/inkscape-silhouette and have not been
-    # tested or validated in any way!
+    # Warning: Taken from https://github.com/fablabnbg/inkscape-silhouette and
+    # have not been tested or validated in any way!
     DeviceParameters(
         "Silhouette Portrait2",
         usb_vendor_id=0x0B4D,
@@ -192,6 +191,20 @@ SUPPORTED_DEVICE_PARAMETERS = [
         tool_depth_min=0,
         tool_depth_max=10,
     ),
+    # Contributed by GitHub user @gtebbutt (in mossblaser/plottie#9)
+    DeviceParameters(
+        "Silhouette Portrait3",
+        usb_vendor_id=0x0B4D,
+        usb_product_id=0x113A,
+        area_width_min=inch2mm(3.0),
+        area_width_max=inch2mm(8.0),
+        area_height_min=inch2mm(3.0),
+        area_height_max=inch2mm(40.0),
+        tool_depth_min=0,
+        tool_depth_max=10,
+    ),
+    # Warning: Taken from https://github.com/fablabnbg/inkscape-silhouette and
+    # have not been tested or validated in any way!
     DeviceParameters(
         "Silhouette Cameo",
         usb_vendor_id=0x0B4D,
@@ -203,6 +216,8 @@ SUPPORTED_DEVICE_PARAMETERS = [
         tool_depth_min=None,
         tool_depth_max=None,
     ),
+    # Warning: Taken from https://github.com/fablabnbg/inkscape-silhouette and
+    # have not been tested or validated in any way!
     DeviceParameters(
         "Silhouette Cameo2",
         usb_vendor_id=0x0B4D,
@@ -214,6 +229,8 @@ SUPPORTED_DEVICE_PARAMETERS = [
         tool_depth_min=None,
         tool_depth_max=None,
     ),
+    # Warning: Taken from https://github.com/fablabnbg/inkscape-silhouette and
+    # have not been tested or validated in any way!
     DeviceParameters(
         "Silhouette Cameo3",
         usb_vendor_id=0x0B4D,
