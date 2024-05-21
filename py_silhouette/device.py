@@ -256,6 +256,34 @@ SUPPORTED_DEVICE_PARAMETERS = [
         tool_depth_max=10,
         tool_speed_max=3000.0,
     ),
+    # Contributed by Gabriel Davison (@gabrieldavison on GitHub, see
+    # mossblaser/plottie#10)
+    DeviceParameters(
+        product_name='Silhouette Cameo4 Plus',
+        usb_vendor_id=0x0B4D,
+        usb_product_id=0x1138,
+        area_width_min=inch2mm(3.0),
+        area_width_max=inch2mm(15.0),
+        area_height_min=inch2mm(3.0),
+        area_height_max=inch2mm(40.0),
+        tool_depth_min=0,
+        tool_depth_max=10,
+        tool_speed_max=3000.0,
+    ),
+    # Contributed by Arthur Masson (@arthursw on GitHub, see
+    # mossblaser/plottie#10)
+    DeviceParameters(
+        product_name='Silhouette Cameo4 Pro',
+        usb_vendor_id=0x0B4D,
+        usb_product_id=0x1139,
+        area_width_min=inch2mm(3.0),
+        area_width_max=inch2mm(24.0),
+        area_height_min=inch2mm(3.0),
+        area_height_max=inch2mm(40.0),
+        tool_depth_min=0,
+        tool_depth_max=10,
+        tool_speed_max=3000.0,
+    ),
 ]
 
 
