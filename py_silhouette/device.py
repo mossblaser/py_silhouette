@@ -203,6 +203,18 @@ SUPPORTED_DEVICE_PARAMETERS = [
         tool_depth_min=0,
         tool_depth_max=10,
     ),
+    # Contributed by GitHub user @matheplica(in mossblaser/py_silhouette#9)
+    DeviceParameters(
+        "Silhouette Portrait4",
+        usb_vendor_id=0x0B4D,
+        usb_product_id=0x113B,
+        area_width_min=inch2mm(3.0),
+        area_width_max=inch2mm(8.0),
+        area_height_min=inch2mm(3.0),
+        area_height_max=inch2mm(40.0),
+        tool_depth_min=0,
+        tool_depth_max=10,
+    ),
     # Warning: Taken from https://github.com/fablabnbg/inkscape-silhouette and
     # have not been tested or validated in any way!
     DeviceParameters(
