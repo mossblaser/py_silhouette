@@ -56,7 +56,7 @@ Documentation
 -------------
 
 [Fairly detailed API documentation can be found in
-ReadTheDocs](http://py_silhouette.rtfd.org/) or built from scratch using sphinx:
+ReadTheDocs](http://py-silhouette.rtfd.org/) or built from scratch using sphinx:
 
     $ pip install -r requirements-docs.txt
     $ cd docs/
